@@ -52,7 +52,7 @@ operations will "just work" on `AbstractRGB`, `AbstractGray`
 (`OpaqueColor{T,1}`), `TransparentRGB`, and `TransparentGray` objects.
 (See definitions for the latter inside of `ColorTypes`).
 
-However, there are some additional operations.
+However, there are some additional operations that you may need to distinguish carefully.
 
 ### Multiplication
 
@@ -64,13 +64,14 @@ This package supports three different notions of multiplication: the inner produ
 julia> c1, c2 = RGB(0.2, 0.3, 0.4), RGB(0.5, 0.3, 0.2)
 (RGB{Float64}(0.2,0.3,0.4), RGB{Float64}(0.5,0.3,0.1))
 
-julia> c1⋅c2     # or dot(c1, c2)
+julia> c1⋅c2     # \cdot<TAB> # or dot(c1, c2) 
 0.09000000000000001
 
-julia> c1⊙c2     # or hadamard(c1, c2)
+# This is equivelant to `mapc(*, c1, c2)`
+julia> c1⊙c2     # \odot<TAB> # or hadamard(c1, c2)
 RGB{Float64}(0.1,0.09,0.08000000000000002)
 
-julia> c1⊗c2     # or tensor(c1, c2)
+julia> c1⊗c2    # \otimes<TAB> # or tensor(c1, c2)
 RGBRGB{Float64}(
  0.1   0.06  0.04000000000000001
  0.15  0.09  0.06
@@ -79,13 +80,14 @@ RGBRGB{Float64}(
 
 Note that `c1⋅c2 = (c1.r*c2.r + c1.g*c2.g + c1.b*c2.b)/3`, where the division by 3 ensures the equivalence of `x`, `Gray(x)`, and `RGB(x, x, x)` for scalar `x` as described above for `norm`.
 
-It is not obvious that one of these should be the default notion of multiplication, so the ordinary multiplication operation `*` is undefined for RGB colors.
-(It is defined for grayscale.)
+It is designed to not support the ordinary multiplication operation `*` because it is not obvious which one of these should be the default option.
+
+However, `*` is defined for grayscale since all these three multiplication operations (i.e., `⋅`, `⊙` and `⊗`) are equivalent in the 1D vector space.
 
 ### Variance
 
 The variance `v = E((c - μ)^2)` (or its bias-corrected version) involves a multiplication,
-and consistent with the above you must specify which sense of multiplication you wish to use:
+and to be consistent with the above you must specify which sense of multiplication you wish to use:
 
 ```julia
 julia> cs = [c1, c2]
